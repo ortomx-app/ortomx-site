@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Política de privacidad — OrtoMX</title>
+<style>
+  body { font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif; max-width: 720px; margin: 40px auto; padding: 0 16px; color: #1f1f1f; line-height: 1.55; }
+  h1 { font-size: 22px; }
+  h2 { font-size: 16px; margin-top: 28px; }
+  code { background: #f2f2f2; padding: 1px 5px; border-radius: 4px; }
+  .updated { color: #666; font-size: 13px; }
+  a.back { display:inline-block; margin-bottom: 18px; color:#1a73e8; text-decoration:none; font-size:14px; }
+</style>
+</head>
+<body>
+<a class="back" href="index.html">← Volver a OrtoMX</a>
+<h1>Política de privacidad de OrtoMX</h1>
+<p class="updated">Última actualización: 14 de septiembre de 2026</p>
+
+<p>
+  OrtoMX ("la extensión", "nosotros") es una extensión de Chrome que subraya y
+  sugiere correcciones ortográficas y gramaticales en español e inglés mientras
+  escribes en campos de texto de cualquier página web. Esta política explica
+  qué datos procesa la extensión y cómo se usan.
+</p>
+
+<h2>1. Qué datos se procesan</h2>
+<p>
+  Cuando escribes en un campo de texto (cuadro de texto, área de texto o
+  contenido editable) en una página donde OrtoMX está activo, el texto que
+  escribiste se envía a la API pública de
+  <a href="https://languagetool.org" target="_blank">LanguageTool</a>
+  (<code>api.languagetool.org</code>) para su análisis ortográfico y
+  gramatical. LanguageTool procesa ese texto según su propia
+  <a href="https://languagetool.org/legal/privacy" target="_blank">política de privacidad</a>.
+</p>
+<p>
+  OrtoMX <strong>no</strong> registra, vende ni comparte el contenido que
+  escribes con ningún tercero distinto de LanguageTool, y no asocia ese texto
+  con tu identidad. No se envía texto desde campos marcados como contraseña,
+  ni desde sitios que hayas excluido en la configuración de la extensión.
+</p>
+
+<h2>2. Qué datos se almacenan localmente</h2>
+<p>
+  OrtoMX guarda de forma local en tu navegador (usando
+  <code>chrome.storage.local</code>, nunca en un servidor propio):
+</p>
+<ul>
+  <li>Tus preferencias (idioma de revisión, sitios excluidos, activado/desactivado).</li>
+  <li>Tu diccionario personal (palabras que marcaste como "ignorar").</li>
+  <li>Un contador de uso diario (número de revisiones realizadas hoy) para aplicar el límite del plan gratuito.</li>
+  <li>El estado de tu licencia Pro, si activaste una.</li>
+</ul>
+<p>Esta información no sale de tu navegador salvo lo indicado en la sección 1 y 3.</p>
+
+<h2>3. Licencia Pro y pagos</h2>
+<p>
+  Si activas OrtoMX Pro, la clave de licencia que ingreses se envía a nuestro
+  servidor de validación de licencias para confirmar que es válida y obtener
+  el estado de tu suscripción. Los pagos se procesan a través de un proveedor
+  externo (por ejemplo, Stripe) en una página fuera de la extensión; OrtoMX no
+  almacena números de tarjeta ni datos bancarios.
+</p>
+
+<h2>4. Permisos que solicita la extensión</h2>
+<ul>
+  <li><strong>Leer y modificar el contenido de las páginas que visitas:</strong> necesario para detectar campos de texto, subrayar errores y aplicar correcciones.</li>
+  <li><strong>Almacenamiento (storage):</strong> para guardar tus preferencias localmente.</li>
+  <li><strong>Menú contextual (contextMenus) y pestaña activa (activeTab):</strong> para funciones auxiliares de la interfaz (por ejemplo, saber en qué sitio estás para poder excluirlo).</li>
+</ul>
+
+<h2>5. Tus opciones</h2>
+<p>
+  Puedes desactivar OrtoMX por completo, excluir sitios específicos, o
+  desinstalar la extensión en cualquier momento desde
+  <code>chrome://extensions</code>. Al desinstalarla, los datos guardados
+  localmente se eliminan junto con la extensión.
+</p>
+
+<h2>6. Contacto</h2>
+<p>
+  Si tienes preguntas sobre esta política, escríbenos a
+  <a href="mailto:genoinmo@gmail.com">genoinmo@gmail.com</a>.
+</p>
+</body>
+</html>
