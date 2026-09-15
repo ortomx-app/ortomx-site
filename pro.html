@@ -39,7 +39,7 @@
   ul.benefits { list-style: none; padding: 0; margin: 18px 0 0; }
   ul.benefits li { padding: 8px 0; font-size: 14.5px; display: flex; gap: 8px; align-items: flex-start; }
   ul.benefits li::before { content: "✅"; flex-shrink: 0; }
-  #buyBtn {
+  #buyBtn, #buyBtnMp {
     display: block;
     width: 100%;
     margin-top: 22px;
@@ -52,7 +52,13 @@
     font-size: 16px;
     cursor: pointer;
   }
-  #buyBtn:disabled { opacity: 0.6; cursor: default; }
+  #buyBtnMp {
+    margin-top: 10px;
+    background: #fff;
+    color: #009ee3;
+    border: 2px solid #009ee3;
+  }
+  #buyBtn:disabled, #buyBtnMp:disabled { opacity: 0.6; cursor: default; }
   #buyError {
     display: none;
     margin-top: 12px;
@@ -83,9 +89,10 @@
         <li>Acceso de por vida, un solo pago.</li>
         <li>Soporte prioritario por correo.</li>
       </ul>
-      <button id="buyBtn">Comprar OrtoMX Pro</button>
+      <button id="buyBtn">Comprar con tarjeta (Stripe)</button>
+      <button id="buyBtnMp">Comprar con Mercado Pago (tarjeta u OXXO)</button>
       <div id="buyError"></div>
-      <p class="note">Pago seguro procesado por Stripe. No almacenamos datos de tu tarjeta.</p>
+      <p class="note">Pago seguro procesado por Stripe o Mercado Pago, según elijas. No almacenamos datos de tu tarjeta.</p>
     </div>
     <p class="note"><a href="index.html">← Volver a OrtoMX</a></p>
   </main>
@@ -97,14 +104,16 @@
   <script>
     const API_BASE = "https://ortomx-license-server.onrender.com";
     const buyBtn = document.getElementById("buyBtn");
+    const buyBtnMp = document.getElementById("buyBtnMp");
     const errorBox = document.getElementById("buyError");
 
-    buyBtn.addEventListener("click", async () => {
+    async function startCheckout(btn, endpoint, originalLabel) {
       buyBtn.disabled = true;
-      buyBtn.textContent = "Redirigiendo a pago seguro...";
+      buyBtnMp.disabled = true;
+      btn.textContent = "Redirigiendo a pago seguro...";
       errorBox.style.display = "none";
       try {
-        const res = await fetch(`${API_BASE}/api/checkout/session`, { method: "POST" });
+        const res = await fetch(`${API_BASE}${endpoint}`, { method: "POST" });
         if (!res.ok) throw new Error("No se pudo crear la sesión de pago.");
         const data = await res.json();
         if (!data.url) throw new Error("Respuesta inválida del servidor.");
@@ -113,9 +122,13 @@
         errorBox.textContent = "Ocurrió un problema al iniciar el pago. Intenta de nuevo en unos segundos.";
         errorBox.style.display = "block";
         buyBtn.disabled = false;
-        buyBtn.textContent = "Comprar OrtoMX Pro";
+        buyBtnMp.disabled = false;
+        btn.textContent = originalLabel;
       }
-    });
+    }
+
+    buyBtn.addEventListener("click", () => startCheckout(buyBtn, "/api/checkout/session", "Comprar con tarjeta (Stripe)"));
+    buyBtnMp.addEventListener("click", () => startCheckout(buyBtnMp, "/api/checkout/mercadopago/session", "Comprar con Mercado Pago (tarjeta u OXXO)"));
   </script>
 </body>
 </html>
