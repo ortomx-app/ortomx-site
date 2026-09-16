@@ -110,7 +110,9 @@
           <li>Acceso de por vida, un solo pago.</li>
           <li>Soporte prioritario por correo.</li>
         </ul>
-        <button class="buy-btn" id="buyBtn">Comprar con tarjeta (Stripe)</button>
+        <!-- Stripe deshabilitado temporalmente: solo se acepta Mercado Pago por ahora.
+             Para reactivarlo, quita el style="display:none" de este botón. -->
+        <button class="buy-btn" id="buyBtn" style="display:none;">Comprar con tarjeta (Stripe)</button>
         <button class="buy-btn mp" id="buyBtnMp">Comprar con Mercado Pago (tarjeta u OXXO)</button>
       </div>
 
@@ -122,12 +124,14 @@
           <li>Cancela cuando quieras, sin penalización ni permanencia forzosa.</li>
           <li>Soporte prioritario por correo.</li>
         </ul>
-        <button class="buy-btn" id="subBtn">Suscribirme con tarjeta (Stripe)</button>
+        <!-- Stripe deshabilitado temporalmente: solo se acepta Mercado Pago por ahora.
+             Para reactivarlo, quita el style="display:none" de este botón. -->
+        <button class="buy-btn" id="subBtn" style="display:none;">Suscribirme con tarjeta (Stripe)</button>
         <button class="buy-btn mp" id="subBtnMp">Suscribirme con Mercado Pago</button>
       </div>
 
       <div id="buyError"></div>
-      <p class="note">Pago seguro procesado por Stripe o Mercado Pago, según elijas. No almacenamos datos de tu tarjeta.</p>
+      <p class="note">Pago seguro procesado por Mercado Pago. No almacenamos datos de tu tarjeta.</p>
     </div>
     <p class="note"><a href="index.html">← Volver a OrtoMX</a></p>
   </main>
