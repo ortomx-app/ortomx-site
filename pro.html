@@ -39,7 +39,7 @@
   ul.benefits { list-style: none; padding: 0; margin: 18px 0 0; }
   ul.benefits li { padding: 8px 0; font-size: 14.5px; display: flex; gap: 8px; align-items: flex-start; }
   ul.benefits li::before { content: "✅"; flex-shrink: 0; }
-  #buyBtn, #buyBtnMp {
+  .buy-btn {
     display: block;
     width: 100%;
     margin-top: 22px;
@@ -52,13 +52,28 @@
     font-size: 16px;
     cursor: pointer;
   }
-  #buyBtnMp {
+  .buy-btn.mp {
     margin-top: 10px;
     background: #fff;
     color: #009ee3;
     border: 2px solid #009ee3;
   }
-  #buyBtn:disabled, #buyBtnMp:disabled { opacity: 0.6; cursor: default; }
+  .buy-btn:disabled { opacity: 0.6; cursor: default; }
+  .plan-toggle { display: flex; gap: 8px; justify-content: center; margin-bottom: 4px; }
+  .plan-toggle button {
+    flex: 1;
+    padding: 10px 0;
+    border-radius: 10px;
+    border: 2px solid #e3e8f0;
+    background: #f6f8fc;
+    color: #555;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  .plan-toggle button.active { border-color: #0d47a1; background: #eaf1fd; color: #0d47a1; }
+  .plan { display: none; }
+  .plan.active { display: block; }
   #buyError {
     display: none;
     margin-top: 12px;
@@ -82,15 +97,35 @@
 
   <main>
     <div class="card">
-      <div class="price">$99.00 <span>MXN · pago único</span></div>
-      <ul class="benefits">
-        <li>Revisiones ilimitadas todos los días (el plan gratuito incluye 60 al día).</li>
-        <li>Sin recordatorios ni interrupciones por límite alcanzado.</li>
-        <li>Acceso de por vida, un solo pago.</li>
-        <li>Soporte prioritario por correo.</li>
-      </ul>
-      <button id="buyBtn">Comprar con tarjeta (Stripe)</button>
-      <button id="buyBtnMp">Comprar con Mercado Pago (tarjeta u OXXO)</button>
+      <div class="plan-toggle">
+        <button id="toggleOnce" class="active" type="button">Pago único</button>
+        <button id="toggleMonthly" type="button">Suscripción mensual</button>
+      </div>
+
+      <div id="planOnce" class="plan active">
+        <div class="price">$99.00 <span>MXN · pago único</span></div>
+        <ul class="benefits">
+          <li>Revisiones ilimitadas todos los días (el plan gratuito incluye 60 al día).</li>
+          <li>Sin recordatorios ni interrupciones por límite alcanzado.</li>
+          <li>Acceso de por vida, un solo pago.</li>
+          <li>Soporte prioritario por correo.</li>
+        </ul>
+        <button class="buy-btn" id="buyBtn">Comprar con tarjeta (Stripe)</button>
+        <button class="buy-btn mp" id="buyBtnMp">Comprar con Mercado Pago (tarjeta u OXXO)</button>
+      </div>
+
+      <div id="planMonthly" class="plan">
+        <div class="price">$39.00 <span>MXN · al mes</span></div>
+        <ul class="benefits">
+          <li>Revisiones ilimitadas todos los días (el plan gratuito incluye 60 al día).</li>
+          <li>Sin recordatorios ni interrupciones por límite alcanzado.</li>
+          <li>Cancela cuando quieras, sin penalización ni permanencia forzosa.</li>
+          <li>Soporte prioritario por correo.</li>
+        </ul>
+        <button class="buy-btn" id="subBtn">Suscribirme con tarjeta (Stripe)</button>
+        <button class="buy-btn mp" id="subBtnMp">Suscribirme con Mercado Pago</button>
+      </div>
+
       <div id="buyError"></div>
       <p class="note">Pago seguro procesado por Stripe o Mercado Pago, según elijas. No almacenamos datos de tu tarjeta.</p>
     </div>
@@ -103,32 +138,68 @@
 
   <script>
     const API_BASE = "https://ortomx-license-server.onrender.com";
-    const buyBtn = document.getElementById("buyBtn");
-    const buyBtnMp = document.getElementById("buyBtnMp");
+    const allBuyButtons = Array.from(document.querySelectorAll(".buy-btn"));
     const errorBox = document.getElementById("buyError");
 
-    async function startCheckout(btn, endpoint, originalLabel) {
-      buyBtn.disabled = true;
-      buyBtnMp.disabled = true;
+    // method: "POST" para crear una sesión/preferencia nueva (pago único y
+    // suscripción de Stripe), "GET" para la suscripción de Mercado Pago, que
+    // solo pide el link ya armado del plan (no crea nada nuevo por clic).
+    async function startCheckout(btn, endpoint, method, originalLabel) {
+      allBuyButtons.forEach((b) => (b.disabled = true));
       btn.textContent = "Redirigiendo a pago seguro...";
       errorBox.style.display = "none";
       try {
-        const res = await fetch(`${API_BASE}${endpoint}`, { method: "POST" });
-        if (!res.ok) throw new Error("No se pudo crear la sesión de pago.");
+        const res = await fetch(`${API_BASE}${endpoint}`, { method });
+        if (!res.ok) throw new Error("No se pudo iniciar el pago.");
         const data = await res.json();
         if (!data.url) throw new Error("Respuesta inválida del servidor.");
         window.location.href = data.url;
       } catch (err) {
         errorBox.textContent = "Ocurrió un problema al iniciar el pago. Intenta de nuevo en unos segundos.";
         errorBox.style.display = "block";
-        buyBtn.disabled = false;
-        buyBtnMp.disabled = false;
+        allBuyButtons.forEach((b) => (b.disabled = false));
         btn.textContent = originalLabel;
       }
     }
 
-    buyBtn.addEventListener("click", () => startCheckout(buyBtn, "/api/checkout/session", "Comprar con tarjeta (Stripe)"));
-    buyBtnMp.addEventListener("click", () => startCheckout(buyBtnMp, "/api/checkout/mercadopago/session", "Comprar con Mercado Pago (tarjeta u OXXO)"));
+    const buyBtn = document.getElementById("buyBtn");
+    const buyBtnMp = document.getElementById("buyBtnMp");
+    const subBtn = document.getElementById("subBtn");
+    const subBtnMp = document.getElementById("subBtnMp");
+
+    buyBtn.addEventListener("click", () =>
+      startCheckout(buyBtn, "/api/checkout/session", "POST", "Comprar con tarjeta (Stripe)")
+    );
+    buyBtnMp.addEventListener("click", () =>
+      startCheckout(buyBtnMp, "/api/checkout/mercadopago/session", "POST", "Comprar con Mercado Pago (tarjeta u OXXO)")
+    );
+    subBtn.addEventListener("click", () =>
+      startCheckout(subBtn, "/api/checkout/session/subscription", "POST", "Suscribirme con tarjeta (Stripe)")
+    );
+    subBtnMp.addEventListener("click", () =>
+      startCheckout(subBtnMp, "/api/checkout/mercadopago/subscription-link", "GET", "Suscribirme con Mercado Pago")
+    );
+
+    // Toggle simple entre las dos tarjetas de plan (pago único / mensual)
+    const toggleOnce = document.getElementById("toggleOnce");
+    const toggleMonthly = document.getElementById("toggleMonthly");
+    const planOnce = document.getElementById("planOnce");
+    const planMonthly = document.getElementById("planMonthly");
+
+    toggleOnce.addEventListener("click", () => {
+      toggleOnce.classList.add("active");
+      toggleMonthly.classList.remove("active");
+      planOnce.classList.add("active");
+      planMonthly.classList.remove("active");
+      errorBox.style.display = "none";
+    });
+    toggleMonthly.addEventListener("click", () => {
+      toggleMonthly.classList.add("active");
+      toggleOnce.classList.remove("active");
+      planMonthly.classList.add("active");
+      planOnce.classList.remove("active");
+      errorBox.style.display = "none";
+    });
   </script>
 </body>
 </html>
