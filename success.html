@@ -86,6 +86,9 @@
     // trae la URL para saber a qué endpoint del backend preguntarle.
     const sessionId = params.get("session_id");
     const mpReference = params.get("external_reference");
+    // Mercado Pago manda este parámetro cuando regresa de la suscripción
+    // mensual (a diferencia de external_reference, que es del pago único).
+    const mpPreapprovalId = params.get("preapproval_id");
 
     const loading = document.getElementById("loading");
     const errorBox = document.getElementById("errorBox");
@@ -97,6 +100,8 @@
       let url = null;
       if (sessionId) {
         url = `${API_BASE}/api/license/by-session?session_id=${encodeURIComponent(sessionId)}`;
+      } else if (mpPreapprovalId) {
+        url = `${API_BASE}/api/license/by-preapproval?id=${encodeURIComponent(mpPreapprovalId)}`;
       } else if (mpReference) {
         url = `${API_BASE}/api/license/by-reference?ref=${encodeURIComponent(mpReference)}`;
       }
